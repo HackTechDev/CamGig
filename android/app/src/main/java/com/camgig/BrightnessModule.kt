@@ -54,6 +54,18 @@ class BrightnessModule(private val reactContext: ReactApplicationContext) :
     }
 
     @ReactMethod
+    fun setKeepScreenOn(enabled: Boolean) {
+        val activity = reactContext.currentActivity ?: return
+        activity.runOnUiThread {
+            if (enabled) {
+                activity.window.addFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+            } else {
+                activity.window.clearFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+            }
+        }
+    }
+
+    @ReactMethod
     fun requestStoragePermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             val intent = Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION).apply {

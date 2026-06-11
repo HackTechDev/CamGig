@@ -7,6 +7,7 @@ const {BrightnessModule} = NativeModules as {
     getDownloadsPath(): Promise<string>;
     hasStoragePermission(): Promise<boolean>;
     requestStoragePermission(): void;
+    setKeepScreenOn(enabled: boolean): void;
   };
 };
 

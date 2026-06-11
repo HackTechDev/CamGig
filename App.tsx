@@ -35,14 +35,13 @@ export default function App() {
 
   const [isRecording, setIsRecording] = useState(false);
   const [fileName, setFileName] = useState<string | null>(null);
-  const [brightness, setBrightness] = useState(0.5);
+  const [brightness, setBrightness] = useState(0.05);
   const downloadsPathRef = useRef<string | null>(null);
 
-  // Initialisation : luminosité + permission stockage + chemin téléchargements
+  // Initialisation : luminosité minimale + permission stockage + chemin téléchargements
   useEffect(() => {
-    Brightness.getBrightness()
-      .then(val => setBrightness(val))
-      .catch(() => {});
+    // Amélioration 1 — écran sombre dès le lancement
+    Brightness.setBrightness(0.05);
 
     Brightness.hasStoragePermission().then(granted => {
       if (!granted) {
@@ -101,6 +100,10 @@ export default function App() {
     if (!ok) return;
 
     try {
+      // Amélioration 3 — assombrir l'écran dès le début de l'enregistrement
+      setBrightness(0.05);
+      Brightness.setBrightness(0.05);
+
       const filePath = buildFilePath();
       const recorder = await videoOutput.createRecorder(
         filePath ? {filePath} : {},
@@ -110,10 +113,14 @@ export default function App() {
       setFileName(name);
       setIsRecording(true);
 
+      // Amélioration 2 — empêcher l'écran de s'éteindre pendant l'enregistrement
+      Brightness.setKeepScreenOn(true);
+
       await recorder.startRecording(
         (path, _reason) => {
           recorderRef.current = null;
           setIsRecording(false);
+          Brightness.setKeepScreenOn(false);
           const n = path.split('/').pop() ?? path;
           setFileName(n);
           Alert.alert('Vidéo enregistrée', `Sauvegardée dans :\n${path}`);
@@ -121,11 +128,13 @@ export default function App() {
         error => {
           recorderRef.current = null;
           setIsRecording(false);
+          Brightness.setKeepScreenOn(false);
           Alert.alert('Erreur', error.message);
         },
       );
     } catch (e: any) {
       setIsRecording(false);
+      Brightness.setKeepScreenOn(false);
       Alert.alert('Erreur', e.message);
     }
   }, [ensurePermissions, buildFilePath, videoOutput]);
