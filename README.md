@@ -54,8 +54,11 @@ cd android && ./gradlew assembleRelease
 ## Fonctionnalités
 
 - **Enregistrement vidéo** avec audio, sauvegardé dans le dossier Téléchargements sous le nom `camgig_YYYYMMDD_HHMMSS.mp4`
+- **Luminosité minimale au démarrage** — l'écran s'ouvre à 5 % de luminosité pour ne pas gêner en concert
+- **Assombrissement automatique** — la luminosité revient à 5 % dès que l'enregistrement démarre
+- **Écran toujours allumé** pendant l'enregistrement (`FLAG_KEEP_SCREEN_ON`), désactivé à l'arrêt
+- **Slider de luminosité** : règle la luminosité de 0 (noir total) à 100 % — module natif Kotlin sans permission système
 - **Mode paysage** : le bouton se repositionne sur le côté droit ; le nom du fichier s'affiche en bas à gauche
-- **Slider de luminosité** : règle la luminosité de l'écran de 0 (noir total) à 100 % — implémenté via un module natif Kotlin sans permission système
 - **Indicateur REC** en haut à gauche pendant l'enregistrement
 
 ## Permissions requises
@@ -72,7 +75,7 @@ cd android && ./gradlew assembleRelease
 
 - **`App.tsx`** — composant unique : preview caméra, permissions, enregistrement, slider, gestion orientation
 - **`src/NativeBrightness.ts`** — wrapper TypeScript du module natif
-- **`android/…/BrightnessModule.kt`** — module Kotlin : luminosité de la fenêtre + chemin Téléchargements + permission stockage
+- **`android/…/BrightnessModule.kt`** — module Kotlin : luminosité de la fenêtre, keep-screen-on, chemin Téléchargements, permission stockage
 - **`android/…/BrightnessPackage.kt`** — enregistrement du module dans React Native
 
 ## Dépendances principales
