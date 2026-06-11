@@ -1,97 +1,86 @@
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+# CamGig
 
-# Getting Started
+Application Android pour enregistrer des vidéos en appuyant sur un bouton rouge.
 
-> **Note**: Make sure you have completed the [Set Up Your Environment](https://reactnative.dev/docs/set-up-your-environment) guide before proceeding.
+Développée en React Native avec [react-native-vision-camera](https://github.com/mrousavy/react-native-vision-camera).
 
-## Step 1: Start Metro
+## Prérequis
 
-First, you will need to run **Metro**, the JavaScript build tool for React Native.
+- Node.js 22+
+- JDK 17 ou 18
+- Android SDK (`ANDROID_HOME` configuré)
+- Un appareil Android connecté en USB (débogage activé) ou un émulateur
 
-To start the Metro dev server, run the following command from the root of your React Native project:
+## Installation
 
-```sh
-# Using npm
+```bash
+npm install
+```
+
+## Développement
+
+Démarrer le bundler Metro :
+```bash
 npm start
-
-# OR using Yarn
-yarn start
 ```
 
-## Step 2: Build and run your app
-
-With Metro running, open a new terminal window/pane from the root of your React Native project, and use one of the following commands to build and run your Android or iOS app:
-
-### Android
-
-```sh
-# Using npm
+Compiler et installer sur l'appareil (dans un second terminal) :
+```bash
 npm run android
-
-# OR using Yarn
-yarn android
 ```
 
-### iOS
+## Build APK
 
-For iOS, remember to install CocoaPods dependencies (this only needs to be run on first clone or after updating native deps).
-
-The first time you create a new project, run the Ruby bundler to install CocoaPods itself:
-
-```sh
-bundle install
+**Debug** (rapide) :
+```bash
+cd android && ./gradlew assembleDebug
 ```
+→ `android/app/build/outputs/apk/debug/app-debug.apk`
 
-Then, and every time you update your native dependencies, run:
-
-```sh
-bundle exec pod install
+**Release** :
+```bash
+cd android && ./gradlew assembleRelease
 ```
+→ `android/app/build/outputs/apk/release/app-release.apk`
 
-For more information, please visit [CocoaPods Getting Started guide](https://guides.cocoapods.org/using/getting-started.html).
+## Utilisation
 
-```sh
-# Using npm
-npm run ios
+1. Lancer l'application
+2. Accorder les permissions caméra et microphone au premier démarrage
+3. Sur Android 11+, accorder la permission « Accès à tous les fichiers » pour sauvegarder dans Téléchargements
+4. Appuyer sur le **bouton rouge** pour démarrer l'enregistrement
+5. Appuyer à nouveau pour arrêter — le chemin du fichier `.mp4` s'affiche
 
-# OR using Yarn
-yarn ios
-```
+## Fonctionnalités
 
-If everything is set up correctly, you should see your new app running in the Android Emulator, iOS Simulator, or your connected device.
+- **Enregistrement vidéo** avec audio, sauvegardé dans le dossier Téléchargements sous le nom `camgig_YYYYMMDD_HHMMSS.mp4`
+- **Mode paysage** : le bouton se repositionne sur le côté droit ; le nom du fichier s'affiche en bas à gauche
+- **Slider de luminosité** : règle la luminosité de l'écran de 0 (noir total) à 100 % — implémenté via un module natif Kotlin sans permission système
+- **Indicateur REC** en haut à gauche pendant l'enregistrement
 
-This is one way to run your app — you can also build it directly from Android Studio or Xcode.
+## Permissions requises
 
-## Step 3: Modify your app
+| Permission | Utilisation |
+|---|---|
+| `CAMERA` | Preview et enregistrement vidéo |
+| `RECORD_AUDIO` | Audio dans les vidéos |
+| `WRITE_EXTERNAL_STORAGE` | Sauvegarde (Android ≤ 9) |
+| `READ_MEDIA_VIDEO` | Accès aux vidéos (Android 13+) |
+| `MANAGE_EXTERNAL_STORAGE` | Sauvegarde dans Téléchargements (Android 11+) |
 
-Now that you have successfully run the app, let's make changes!
+## Architecture
 
-Open `App.tsx` in your text editor of choice and make some changes. When you save, your app will automatically update and reflect these changes — this is powered by [Fast Refresh](https://reactnative.dev/docs/fast-refresh).
+- **`App.tsx`** — composant unique : preview caméra, permissions, enregistrement, slider, gestion orientation
+- **`src/NativeBrightness.ts`** — wrapper TypeScript du module natif
+- **`android/…/BrightnessModule.kt`** — module Kotlin : luminosité de la fenêtre + chemin Téléchargements + permission stockage
+- **`android/…/BrightnessPackage.kt`** — enregistrement du module dans React Native
 
-When you want to forcefully reload, for example to reset the state of your app, you can perform a full reload:
+## Dépendances principales
 
-- **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Dev Menu**, accessed via <kbd>Ctrl</kbd> + <kbd>M</kbd> (Windows/Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (macOS).
-- **iOS**: Press <kbd>R</kbd> in iOS Simulator.
-
-## Congratulations! :tada:
-
-You've successfully run and modified your React Native App. :partying_face:
-
-### Now what?
-
-- If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
-- If you're curious to learn more about React Native, check out the [docs](https://reactnative.dev/docs/getting-started).
-
-# Troubleshooting
-
-If you're having issues getting the above steps to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
-
-# Learn More
-
-To learn more about React Native, take a look at the following resources:
-
-- [React Native Website](https://reactnative.dev) - learn more about React Native.
-- [Getting Started](https://reactnative.dev/docs/environment-setup) - an **overview** of React Native and how setup your environment.
-- [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
-- [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
-- [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
+| Package | Version | Rôle |
+|---|---|---|
+| `react-native` | 0.86.0 | Framework |
+| `react-native-vision-camera` | ^5.0.11 | Caméra et enregistrement vidéo |
+| `react-native-nitro-modules` | ^0.35.9 | Moteur de liaison natif (requis par vision-camera v5) |
+| `react-native-nitro-image` | ^0.15.1 | Types d'images (requis par vision-camera v5) |
+| `@react-native-community/slider` | ^4.x | Composant slider pour la luminosité |
