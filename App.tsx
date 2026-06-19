@@ -160,6 +160,13 @@ export default function App() {
     Brightness.setBrightness(val);
   }, []);
 
+  // Couleurs du bouton qui s'assombrissent avec la luminosité
+  const btnRedBase = isRecording ? 153 : 238;
+  const buttonBgColor = `rgb(${Math.round(btnRedBase * brightness)}, 0, 0)`;
+  const grayBase = Math.round(136 + 119 * brightness);
+  const buttonBorderColor = `rgb(${grayBase}, ${grayBase}, ${grayBase})`;
+  const iconColor = `rgb(${grayBase}, ${grayBase}, ${grayBase})`;
+
   if (!device) {
     return (
       <SafeAreaView style={styles.centered}>
@@ -227,13 +234,16 @@ export default function App() {
       <SafeAreaView
         style={[styles.controls, isLandscape && styles.controlsLandscape]}>
         <TouchableOpacity
-          style={[styles.button, isRecording && styles.buttonRecording]}
+          style={[
+            styles.button,
+            {backgroundColor: buttonBgColor, borderColor: buttonBorderColor},
+          ]}
           onPress={handleButtonPress}
           activeOpacity={0.8}>
           {isRecording ? (
-            <View style={styles.stopIcon} />
+            <View style={[styles.stopIcon, {backgroundColor: iconColor}]} />
           ) : (
-            <View style={styles.recordIcon} />
+            <View style={[styles.recordIcon, {backgroundColor: iconColor}]} />
           )}
         </TouchableOpacity>
         <Text style={styles.hint}>
