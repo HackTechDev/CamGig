@@ -53,13 +53,30 @@ cd android && ./gradlew assembleRelease
 
 ## Fonctionnalités
 
-- **Enregistrement vidéo** avec audio, sauvegardé dans le dossier Téléchargements sous le nom `camgig_YYYYMMDD_HHMMSS.mp4`
-- **Luminosité minimale au démarrage** — l'écran s'ouvre à 5 % de luminosité pour ne pas gêner en concert
-- **Assombrissement automatique** — la luminosité revient à 5 % dès que l'enregistrement démarre
-- **Écran toujours allumé** pendant l'enregistrement (`FLAG_KEEP_SCREEN_ON`), désactivé à l'arrêt
-- **Slider de luminosité** : règle la luminosité de 0 (noir total) à 100 % — module natif Kotlin sans permission système
-- **Mode paysage** : le bouton se repositionne sur le côté droit ; le nom du fichier s'affiche en bas à gauche
-- **Indicateur REC** en haut à gauche pendant l'enregistrement
+### Enregistrement vidéo
+- Bouton rouge central pour démarrer/arrêter l'enregistrement
+- Vidéo sauvegardée automatiquement dans le dossier Téléchargements sous le nom `camgig_YYYYMMDD_HHMMSS.mp4`
+- Audio inclus
+- Indicateur REC en haut à gauche pendant l'enregistrement
+
+### Gestion de la luminosité
+- Slider pour régler la luminosité de 0 % (noir total) à 100 %
+- À luminosité zéro, un calque noir recouvre l'écran mais le bouton reste visible (cercle gris)
+- La barre de navigation Android (retour/accueil/multitâche) suit aussi la luminosité
+
+### Comportements automatiques pour le concert
+- Luminosité minimale (5 %) dès le lancement de l'app
+- Assombrissement automatique à 5 % dès que l'enregistrement démarre
+- Écran toujours allumé pendant l'enregistrement (`FLAG_KEEP_SCREEN_ON`), désactivé à l'arrêt
+- Le bouton d'enregistrement et ses icônes s'assombrissent avec le slider pour ne pas trahir votre présence dans le noir
+
+### Interface adaptative
+- Mode portrait : slider en haut, bouton en bas
+- Mode paysage : bouton ancré à droite, nom du fichier affiché en bas à gauche
+
+### Permissions gérées
+- Caméra et microphone demandés au premier lancement
+- Sur Android 11+, invite à accorder l'accès à tous les fichiers pour sauvegarder dans Téléchargements
 
 ## Permissions requises
 
