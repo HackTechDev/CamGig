@@ -38,10 +38,17 @@ export default function App() {
   const [brightness, setBrightness] = useState(0.05);
   const downloadsPathRef = useRef<string | null>(null);
 
+  const applyBrightness = useCallback((val: number) => {
+    setBrightness(val);
+    Brightness.setBrightness(val);
+    const g = Math.round(255 * val);
+    Brightness.setNavigationBarColor(g, g, g);
+  }, []);
+
   // Initialisation : luminosité minimale + permission stockage + chemin téléchargements
   useEffect(() => {
     // Amélioration 1 — écran sombre dès le lancement
-    Brightness.setBrightness(0.05);
+    applyBrightness(0.05);
 
     Brightness.hasStoragePermission().then(granted => {
       if (!granted) {
@@ -64,7 +71,7 @@ export default function App() {
         downloadsPathRef.current = path;
       })
       .catch(() => {});
-  }, []);
+  }, [applyBrightness]);
 
   const ensurePermissions = useCallback(async () => {
     if (!hasCameraPermission) {
@@ -101,8 +108,7 @@ export default function App() {
 
     try {
       // Amélioration 3 — assombrir l'écran dès le début de l'enregistrement
-      setBrightness(0.05);
-      Brightness.setBrightness(0.05);
+      applyBrightness(0.05);
 
       const filePath = buildFilePath();
       const recorder = await videoOutput.createRecorder(
@@ -137,7 +143,7 @@ export default function App() {
       Brightness.setKeepScreenOn(false);
       Alert.alert('Erreur', e.message);
     }
-  }, [ensurePermissions, buildFilePath, videoOutput]);
+  }, [ensurePermissions, buildFilePath, videoOutput, applyBrightness]);
 
   const stopRecording = useCallback(async () => {
     try {
@@ -156,9 +162,8 @@ export default function App() {
   }, [isRecording, startRecording, stopRecording]);
 
   const handleBrightnessChange = useCallback((val: number) => {
-    setBrightness(val);
-    Brightness.setBrightness(val);
-  }, []);
+    applyBrightness(val);
+  }, [applyBrightness]);
 
   // Couleurs du bouton qui s'assombrissent avec la luminosité
   const btnRedBase = isRecording ? 153 : 238;
